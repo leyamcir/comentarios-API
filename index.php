@@ -115,6 +115,45 @@ $app->get('/comentarios', function() use ($app) {
 });
 
 
+$app->map('/comentarios/:user', function($username) use ($app) {
+    $response = array();
+    $dbh = new DbHandler();
+
+    $comment = $app->request()->params('comment');
+
+    if(strlen(@$comment) >0){
+        try{
+            //Get comments
+            $result = $dbh->addComment($username, $comment);
+
+        } catch(Exception $e) {
+
+            $response["error"] = true;
+            $response["message"] = $e->getMessage();
+            appResponse(404, $response);
+
+            $app->stop();
+        }
+
+        if ($result) {
+            $response["error"] = false;
+            $response["message"] = "Su comentario ha sido añadido.";
+            appResponse(200, $response);
+
+        } else {
+            $response["error"] = true;
+            $response["message"] = "No se ha podido añadir el comentario.";
+            appResponse(404, $response);
+        }
+    } else {
+        $response["error"] = true;
+        $response["message"] = "Debe indicar un comentario con el parámetro 'comment'.";
+        appResponse(404, $response);
+    }
+
+
+})->via('PUT', 'POST');
+
 $app->run();
 
 ?>
