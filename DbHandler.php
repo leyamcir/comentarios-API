@@ -134,7 +134,7 @@ class DbHandler {
 
 	    //Add author comment
 	    $collection_users->update(
-	    	array("_id"=> "author1"),
+	    	array("_id"=> $author),
 	    	array('$addToSet' => array("comments" => $fun_exec['retval'])),
 	    	array("upsert" => true)
 	    );
