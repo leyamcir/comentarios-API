@@ -22,42 +22,12 @@ function appResponse($status_code, $response) {
     echo json_encode($response);
 }
 
-/**
- * Echo welcome text
- */
+
 $app->get('/', function() use($app) {
     $app->response->setStatus(200);
     echo "Welcome to Slim 2.0 based API";
 });
 
-
-
-$app->get('/comentarios', function() use ($app) {
-    $response = array();
-    $dbh = new DbHandler();
-
-    try{
-        //Get comments
-        $result = $dbh->getComments();
-
-    } catch(Exception $e) {
-
-        $response["error"] = true;
-        $response["message"] = $e->getMessage();
-        appResponse(404, $response);
-
-        $app->stop();
-    }
-
-    if ($result != NULL) {
-        appResponse(200, $result);
-
-    } else {
-        $response["error"] = true;
-        $response["message"] = "No hay comentarios disponibles.";
-        appResponse(404, $response);
-    }
-});
 
 $app->post('/crear', function() use ($app) {
     $response = array();
@@ -86,6 +56,7 @@ $app->post('/crear', function() use ($app) {
         appResponse(404, $response);
     }
 });
+
 
 $app->post('/datos_prueba', function() use ($app) {
     $response = array();
@@ -116,9 +87,34 @@ $app->post('/datos_prueba', function() use ($app) {
 });
 
 
+$app->get('/comentarios', function() use ($app) {
+    $response = array();
+    $dbh = new DbHandler();
+
+    try{
+        //Get comments
+        $result = $dbh->getComments();
+
+    } catch(Exception $e) {
+
+        $response["error"] = true;
+        $response["message"] = $e->getMessage();
+        appResponse(404, $response);
+
+        $app->stop();
+    }
+
+    if ($result != NULL) {
+        appResponse(200, $result);
+
+    } else {
+        $response["error"] = true;
+        $response["message"] = "No hay comentarios disponibles.";
+        appResponse(404, $response);
+    }
+});
+
 
 $app->run();
-
-
 
 ?>
