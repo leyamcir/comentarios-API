@@ -6,114 +6,119 @@ require 'Slim/Slim.php';
 
 $app = new \Slim\Slim();
 
-$app->get('/comentarios', 'showData');
-$app->get('/comentarios_pretty', 'showData2');
-$app->post('/crear', 'initialize');
-$app->post('/datos_prueba', 'addData');
+/**
+ * Echoing json response to client
+ * @param String $status_code Http response code
+ * @param Int $response Json response
+ */
+function appResponse($status_code, $response) {
+    $app = \Slim\Slim::getInstance();
+    // Http response code
+    $app->status($status_code);
+
+    // setting response content type to json
+    $app->contentType('application/json');
+
+    echo json_encode($response);
+}
+
+/**
+ * Echo welcome text
+ */
+$app->get('/', function() use($app) {
+    $app->response->setStatus(200);
+    echo "Welcome to Slim 2.0 based API";
+});
+
+
+
+$app->get('/comentarios', function() use ($app) {
+    $response = array();
+    $dbh = new DbHandler();
+
+    try{
+        //Get comments
+        $result = $dbh->getComments();
+
+    } catch(Exception $e) {
+
+        $response["error"] = true;
+        $response["message"] = $e->getMessage();
+        appResponse(404, $response);
+
+        $app->stop();
+    }
+
+    if ($result != NULL) {
+        appResponse(200, $result);
+
+    } else {
+        $response["error"] = true;
+        $response["message"] = "No hay comentarios disponibles.";
+        appResponse(404, $response);
+    }
+});
+
+$app->post('/crear', function() use ($app) {
+    $response = array();
+    $dbh = new DbHandler();
+
+    try{
+        //Get comments
+        $result = $dbh->initialize();
+
+    } catch(Exception $e) {
+
+        $response["error"] = true;
+        $response["message"] = $e->getMessage();
+        appResponse(404, $response);
+
+        $app->stop();
+    }
+
+    if ($result) {
+        $response["message"] = "Inicialización realizada con éxito.";
+        appResponse(200, $response);
+
+    } else {
+        $response["error"] = true;
+        $response["message"] = "Ha ocurrido un error";
+        appResponse(404, $response);
+    }
+});
+
+$app->post('/datos_prueba', function() use ($app) {
+    $response = array();
+    $dbh = new DbHandler();
+
+    try{
+        //Get comments
+        $result = $dbh->addData();
+
+    } catch(Exception $e) {
+
+        $response["error"] = true;
+        $response["message"] = $e->getMessage();
+        appResponse(404, $response);
+
+        $app->stop();
+    }
+
+    if ($result) {
+        $response["message"] = "Datos de prueba añadidos con éxito.";
+        appResponse(200, $response);
+
+    } else {
+        $response["error"] = true;
+        $response["message"] = "Ha ocurrido un error";
+        appResponse(404, $response);
+    }
+});
+
+
+
 $app->run();
 
-function initialize(){
-// connect
-    $m = new MongoClient();
-// select your database
-    $db = $m->api_comments3;
-// select your collection
-    $collection = $db->counters;
-// add a record
-    $document = array(
-    	"_id" => "comment_id",
-    	"seq" => 0
-    );
-    $collection->insert($document);
-
-    echo "Inicialización realizada con éxito.";
-}
-
-
-function addData()
-{
-// connect
-    $m = new MongoClient();
-// select your database
-    $db = $m->api_comments3;
-// select your collection
-    $collection = $db->comments;
-// add a record
-    $fun = 'function getNextSequence(name) {
-		var ret = db.counters.findAndModify(
-			{
-			query: { _id: name },
-			update: { $inc: { seq: 1 } },
-			new: true
-			}
-		);
-
-	   return ret.seq;
-	}';
-
-	$scope = array();
-	$code = new MongoCode($fun, $scope);
-
-	$fun_exec = $db->execute($code, array("comment_id"));
-
-    $document = array(
-    	"_id" => $fun_exec['retval'],
-    	"content" => "First test post",
-    	"author" => "author1",
-    	"date" => new MongoDate()
-    );
-    $collection->insert($document);
-
-    $fun_exec = $db->execute($code, array("comment_id"));
-
-// add another record
-    $document = array(
-    	"_id" => $fun_exec['retval'],
-    	"content" => "Second test post",
-    	"author" => "author2",
-    	"date" => new MongoDate()
-    );
-    $collection->insert($document);
-
-    echo "Añadidos datos de prueba";
-}
-
-function showData(){
-// connect
-    $m = new MongoClient();
-// select your database
-    $db = $m->api_comments3;
-// select your collection
-    $collection = $db->comments;
-// find everything in the collection
-    $cursor = $collection->find();
-// Show the result here
-    $result = array();
-    foreach ($cursor as $document) {
-        $result[] = $document;
-    }
-
-    echo json_encode($result);
-
-}
-
-function showData2()
-{
-// connect
-    $m = new MongoClient();
-// select your database
-    $db = $m->api_comments3;
-// select your collection
-    $collection = $db->comments;
-// find everything in the collection
-    $cursor = $collection->find();
-// Show the result here
-    $result = array();
-    foreach ($cursor as $document) {
-        echo json_encode($document)."\n";
-    }
-
-}
 
 
 ?>
