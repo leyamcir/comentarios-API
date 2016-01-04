@@ -26,18 +26,6 @@ class DbHandler {
 
     //Public functions
 
-    public function getComments(){
-    	$collection = $this->db->comments;
-    	$cursor = $collection->find();
-
-	    $result = array();
-	    foreach ($cursor as $document) {
-	        $result[] = $document;
-	    }
-
-	    return (count($result) > 0) ? $result : NULL;
-    }
-
     public function initialize(){
 	    $collection = $this->db->counters;
 
@@ -97,6 +85,35 @@ class DbHandler {
 	    return true;
 	}
 
+    public function getComments(){
+    	$collection = $this->db->comments;
+    	$cursor = $collection->find();
+
+	    $result = array();
+	    foreach ($cursor as $document) {
+	        $result[] = $document;
+	    }
+
+	    return (count($result) > 0) ? $result : NULL;
+    }
+
+    public function getComment($id_comment){
+    	$collection = $this->db->comments;
+    	$cursor = $collection->find(
+	        array(
+	            '_id' => intval($id_comment)
+	        )
+	    );;
+
+	    $result = array();
+	    foreach ($cursor as $document) {
+	        $result[] = $document;
+	    }
+
+	    return (count($result) > 0) ? $result : NULL;
+    }
+
+
 	public function addComment($author, $content){
 	    $collection_comments = $this->db->comments;
 	    $collection_users = $this->db->users;
@@ -124,6 +141,8 @@ class DbHandler {
 
 	    return true;
 	}
+
+
 
 }
 ?>
