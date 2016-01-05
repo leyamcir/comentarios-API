@@ -52,7 +52,7 @@ $app->post('/crear', function() use ($app) {
 
     } else {
         $response["error"] = true;
-        $response["message"] = "Ha ocurrido un error";
+        $response["message"] = "Ha ocurrido un error.";
         appResponse(404, $response);
     }
 });
@@ -179,8 +179,67 @@ $app->post('/comentarios/:user', function($username) use ($app) {
         appResponse(404, $response);
     }
 
+});
+
+
+$app->post('/comentarios/:user/favoritos/:id', function($username, $id_comment) use ($app) {
+    $response = array();
+    $dbh = new DbHandler();
+    try{
+        //Get comments
+        $result = $dbh->addFavoriteComment($username, $id_comment);
+
+    } catch(Exception $e) {
+
+        $response["error"] = true;
+        $response["message"] = $e->getMessage();
+        appResponse(404, $response);
+
+        $app->stop();
+    }
+
+    if ($result) {
+        $response["error"] = false;
+        $response["message"] = "El comentario ha sido añadido como favorito.";
+        appResponse(200, $response);
+
+    } else {
+        $response["error"] = true;
+        $response["message"] = "No se ha podido añadir el comentario como favorito.";
+        appResponse(404, $response);
+    }
+
+})->conditions(array('id' => '[0-9]+'));
+
+
+$app->get('/comentarios/:user/favoritos', function($username) use ($app) {
+    $response = array();
+    $dbh = new DbHandler();
+    try{
+        //Get comments
+        $result = $dbh->getFavoriteComments($username);
+
+    } catch(Exception $e) {
+
+        $response["error"] = true;
+        $response["message"] = $e->getMessage();
+        appResponse(404, $response);
+
+        $app->stop();
+    }
+
+    if ($result != NULL) {
+        appResponse(200, $result);
+
+
+    } else {
+        $response["error"] = true;
+        $response["message"] = "No se encuentran favoritos para este usuario.";
+        appResponse(404, $response);
+    }
 
 });
+
 
 $app->run();
 

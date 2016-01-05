@@ -143,6 +143,56 @@ class DbHandler {
 	}
 
 
+	public function addFavoriteComment($author, $id_comment){
+	    $collection_users = $this->db->users;
+
+	    //Add user favorite comment
+	    $collection_users->update(
+	    	array("_id"=> $author),
+	    	array('$addToSet' => array("fav_comments" => $id_comment))
+	    );
+
+	    return true;
+	}
+
+	public function getFavoriteComments($author){
+	    $collection_comments = $this->db->comments;
+    	$collection_users = $this->db->users;
+
+    	$cursor = $collection_users->find(
+	        array(
+	            '_id' => $author
+	        )
+	    );;
+
+	    $result = array();
+	    foreach ($cursor as $document) {
+	        $result = $document['fav_comments'];
+	    }
+
+	    foreach ($result as $num) {
+	    	$array_ids[] = intval($num);
+	    }
+
+	    if(count($array_ids)){
+	    	 $cursor2 = $collection_comments->find(
+		        array(
+		            '_id' => array(
+		            	'$in' => $array_ids
+		            )
+		        )
+		    );
+		    $result2 = array();
+		    foreach ($cursor2 as $document) {
+		        $result2[] = $document;
+		    }
+	    }
+
+
+
+
+	    return (count($result2) > 0) ? $result2 : NULL;
+	}
 
 }
 ?>
