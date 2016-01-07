@@ -1,6 +1,7 @@
 <?php
 
 require 'Slim/Slim.php';
+require_once 'DbHandler.php';
 
 \Slim\Slim::registerAutoloader();
 
@@ -115,6 +116,34 @@ $app->get('/comentarios', function() use ($app) {
 });
 
 
+$app->get('/comentarios/favoritos', function() use ($app) {
+    $response = array();
+    $dbh = new DbHandler();
+
+    try{
+        //Get comments
+        $result = $dbh->getFavoriteComments();
+
+    } catch(Exception $e) {
+
+        $response["error"] = true;
+        $response["message"] = $e->getMessage();
+        appResponse(404, $response);
+
+        $app->stop();
+    }
+
+    if ($result != NULL) {
+        appResponse(200, $result);
+
+    } else {
+        $response["error"] = true;
+        $response["message"] = "No se encuentra ningún comentario marcado como favorito.";
+        appResponse(404, $response);
+    }
+});
+
+
 $app->get('/comentarios/:id', function($id_comment) use ($app) {
     $response = array();
     $dbh = new DbHandler();
@@ -217,7 +246,7 @@ $app->get('/comentarios/:user/favoritos', function($username) use ($app) {
     $dbh = new DbHandler();
     try{
         //Get comments
-        $result = $dbh->getFavoriteComments($username);
+        $result = $dbh->getAuthorFavoriteComments($username);
 
     } catch(Exception $e) {
 

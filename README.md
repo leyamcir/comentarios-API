@@ -19,3 +19,5 @@ parámetro: comment
 [POST] http://localhost/comentarios-API/comentarios/:usuario/favoritos/:id
 
 [GET] http://localhost/comentarios-API/comentarios/:usuario/favoritos
+
+[GET] http://localhost/comentarios-API/comentarios/favoritos
