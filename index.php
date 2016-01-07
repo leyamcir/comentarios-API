@@ -30,7 +30,7 @@ $app->get('/', function() use($app) {
 });
 
 
-$app->post('/crear', function() use ($app) {
+$app->post('/inicializar', function() use ($app) {
     $response = array();
     $dbh = new DbHandler();
 
@@ -59,13 +59,13 @@ $app->post('/crear', function() use ($app) {
 });
 
 
-$app->post('/datos_prueba', function() use ($app) {
+$app->post('/datos_prueba(/:num_comments)', function($num_comments = 10) use ($app) {
     $response = array();
     $dbh = new DbHandler();
 
     try{
         //Get comments
-        $result = $dbh->addData();
+        $result = $dbh->addData($num_comments);
 
     } catch(Exception $e) {
 

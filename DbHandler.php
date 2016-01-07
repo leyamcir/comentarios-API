@@ -29,59 +29,49 @@ if (!class_exists('DbHandler')) {
 
 	    public function initialize(){
 		    $collection = $this->db->counters;
+		    $collection_comments = $this->db->comments;
+		    $collection_users = $this->db->users;
+
+		    $collection->remove(array(),array('safe' => true));
+		    $collection_comments->remove(array(),array('safe' => true));
+		    $collection_users->remove(array(),array('safe' => true));
+
 
 		    $document = array(
 		        "_id" => "comment_id",
 		        "seq" => 0
 		    );
 		    $collection->insert($document);
-
 		    return true;
 	    }
 
-	    public function addData(){
+	    public function addData($add_number = 10){
 		    $collection_comments = $this->db->comments;
 		    $collection_users = $this->db->users;
 
 			//$scope = array();
 			$code = new MongoCode($this->funGetNextSequence);
 
-			$fun_exec = $this->db->execute($code, array("comment_id"));
+			for ($i=0; $i < $add_number; $i++) {
 
-			//Add comment 1
-		    $document = array(
-		    	"_id" => $fun_exec['retval'],
-		    	"content" => "First test post",
-		    	"author" => "author1",
-		    	"date" => new MongoDate()
-		    );
-		    $collection_comments->insert($document);
+				$fun_exec = $this->db->execute($code, array("comment_id"));
 
-		    //Add author1 comment
-		    $collection_users->update(
-		    	array("_id"=> "author1"),
-		    	array('$addToSet' => array("comments" => $fun_exec['retval'])),
-		    	array("upsert" => true)
-		    );
+				//Add comment $i
+				$document = array(
+					"_id" => $fun_exec['retval'],
+					"content" => "Este es el comentario autogenerado número ".$i,
+					"author" => "usuario".$i,
+					"date" => new MongoDate()
+				);
+				$collection_comments->insert($document);
 
-
-		    $fun_exec = $this->db->execute($code, array("comment_id"));
-
-		// add another record
-		    $document = array(
-		    	"_id" => $fun_exec['retval'],
-		    	"content" => "Second test post",
-		    	"author" => "author2",
-		    	"date" => new MongoDate()
-		    );
-		    $collection_comments->insert($document);
-
-		    //Add author2 comment
-		    $collection_users->update(
-		    	array("_id"=> "author2"),
-		    	array('$addToSet' => array("comments" => $fun_exec['retval'])),
-		    	array("upsert" => true)
-		    );
+				//Add author1 comment
+				$collection_users->update(
+					array("_id"=> "author1"),
+					array('$addToSet' => array("comments" => $fun_exec['retval'])),
+					array("upsert" => true)
+				);
+			}
 
 		    return true;
 		}

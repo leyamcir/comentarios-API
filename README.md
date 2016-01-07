@@ -5,9 +5,9 @@ Simplemente, un muro donde la gente pueda poner frases y que el resto de la gent
 
 Llamadas disponibles:
 
-[POST] http://localhost/comentarios-API/crear (inicializar contador)
+[POST] http://localhost/comentarios-API/inicializar (inicializar contador y borrar datos antiguos)
 
-[POST] http://localhost/comentarios-API/datos_prueba (añadir un par de comentarios de prueba)
+[POST] http://localhost/comentarios-API/datos_prueba(/:num_comentarios) (añadir un par de comentarios de prueba)
 
 [GET] http://localhost/comentarios-API/comentarios (datos en formato json)
 
