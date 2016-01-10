@@ -104,6 +104,22 @@ if (!class_exists('DbHandler')) {
 		    return (count($result) > 0) ? $result : NULL;
 	    }
 
+	    public function getAuthorComments($author){
+	    	$collection = $this->db->comments;
+	    	$cursor = $collection->find(
+		        array(
+		            'author' => ($author)
+		        )
+		    );;
+
+		    $result = array();
+		    foreach ($cursor as $document) {
+		        $result[] = $document;
+		    }
+
+		    return (count($result) > 0) ? $result : NULL;
+	    }
+
 
 		public function addComment($author, $content){
 		    $collection_comments = $this->db->comments;

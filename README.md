@@ -13,6 +13,8 @@ Llamadas disponibles:
 
 [GET] http://localhost/comentarios-API/comentarios/:id (datos en formato json)
 
+[GET] http://localhost/comentarios-API/comentarios/:usuario
+
 [POST] http://localhost/comentarios-API/comentarios/:usuario
 parámetro: comment
 

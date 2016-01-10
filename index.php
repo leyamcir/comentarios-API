@@ -172,6 +172,36 @@ $app->get('/comentarios/:id', function($id_comment) use ($app) {
 })->conditions(array('id' => '[0-9]+'));
 
 
+$app->get('/comentarios/:user', function($username) use ($app) {
+    $response = array();
+    $dbh = new DbHandler();
+
+    try{
+        //Get comments
+        $result = $dbh->getAuthorComments($username);
+
+    } catch(Exception $e) {
+
+        $response["error"] = true;
+        $response["message"] = $e->getMessage();
+        appResponse(404, $response);
+
+        $app->stop();
+    }
+
+    if ($result != NULL) {
+        appResponse(200, $result);
+
+    } else {
+        $response["error"] = true;
+        $response["message"] = "No se encuentra ningún comentario con id = ".$id_comment.".";
+        appResponse(404, $response);
+    }
+
+});
+
+
+
 $app->post('/comentarios/:user', function($username) use ($app) {
     $response = array();
     $dbh = new DbHandler();
@@ -180,7 +210,7 @@ $app->post('/comentarios/:user', function($username) use ($app) {
 
     if(strlen(@$comment) >0){
         try{
-            //Get comments
+            //Add new comment
             $result = $dbh->addComment($username, $comment);
 
         } catch(Exception $e) {
