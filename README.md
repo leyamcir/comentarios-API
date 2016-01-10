@@ -7,7 +7,7 @@ Llamadas disponibles:
 
 [POST] http://localhost/comentarios-API/inicializar (inicializar contador y borrar datos antiguos)
 
-[POST] http://localhost/comentarios-API/datos_prueba(/:num_comentarios) (añadir un par de comentarios de prueba)
+[POST] http://localhost/comentarios-API/datos_prueba(/:num_comments) (añadir "num_comments" comentarios de prueba. 10 por defecto)
 
 [GET] http://localhost/comentarios-API/comentarios (datos en formato json)
 
