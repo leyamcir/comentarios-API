@@ -14,8 +14,6 @@ class DbHandlerTest extends UnitTestCase{
     		$this->dbh->initialize();
     		$this->dbh->addData(5);
     	}
-    	echo "hola";
-    	var_dump($initialize);
 	}
 
 	function setUp(){
