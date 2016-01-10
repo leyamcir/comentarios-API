@@ -39,8 +39,6 @@ class DbHandlerTest extends UnitTestCase{
 		$author = 'usuarioTest'.$this->random_string(5);
 		$content = 'Prueba creación de comentario';
 
-		echo "lala ";
-
 		$this->assertTrue($this->dbh->addComment($author, $content));
 		clearstatcache();
 
