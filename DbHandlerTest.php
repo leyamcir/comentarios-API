@@ -80,7 +80,7 @@ class DbHandlerTest extends UnitTestCase{
 
 }
 
-$test = new DbHandlerTest(true);//Inicializa y añade datos al principio
+$test = new DbHandlerTest(true);//Inicializa y añade datos al principio (borra datos anteriores)
 $test->run(new HtmlReporter());
 
 $test = new DbHandlerTest(false);//Prueba sin inicializar datos
